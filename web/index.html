@@ -1,0 +1,148 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>webgpufft - Browser Validation</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root {
+        --bg: #0b0f17;
+        --panel: #111827;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --good: #34d399;
+        --bad: #fb7185;
+        --warn: #fbbf24;
+        --border: #243041;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px;
+        display: grid;
+        gap: 12px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      button {
+        background: #1f2937;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button:hover {
+        background: #273245;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .summary {
+        font-family: var(--mono);
+        font-size: 13px;
+        white-space: pre-wrap;
+      }
+      .summary .pass {
+        color: var(--good);
+      }
+      .summary .fail {
+        color: var(--bad);
+      }
+      .summary .skip {
+        color: var(--warn);
+      }
+      #log {
+        height: 52vh;
+        overflow: auto;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        padding: 10px;
+        font-family: var(--mono);
+        font-size: 12px;
+        line-height: 1.35;
+        background: #0b1220;
+        white-space: pre-wrap;
+      }
+      .kv {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 6px 10px;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .kv div:nth-child(odd) {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="panel">
+        <h1>webgpufft - Browser Validation</h1>
+        <div class="muted">
+          Recommended: run <span style="font-family: var(--mono)">web/serve.cmd</span> and open
+          <span style="font-family: var(--mono)">http://localhost:8000/web/</span>.
+          Some Chrome setups block WebGPU on <span style="font-family: var(--mono)">file://</span>.
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="row">
+          <button id="btnInit">Init WebGPU</button>
+          <button id="btnTests" disabled>Run Tests</button>
+          <button id="btnBench" disabled>Run Benchmarks</button>
+        </div>
+        <div class="muted" style="margin-top: 8px">If WebGPU is unavailable in this context, tests will be skipped and a hint will be shown below.</div>
+      </div>
+
+      <div class="panel">
+        <div class="summary" id="summary">Status: idle</div>
+      </div>
+
+      <div class="panel">
+        <div class="kv" id="gpuInfo"></div>
+      </div>
+
+      <div class="panel">
+        <div id="log"></div>
+      </div>
+    </div>
+
+    <script src="./bundle.js"></script>
+  </body>
+</html>

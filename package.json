@@ -1,0 +1,35 @@
+{
+  "name": "webgpufft",
+  "version": "0.1.0",
+  "description": "Standalone WebGPU FFT library (WGSL) with plan-based execution.",
+  "keywords": [
+    "webgpu",
+    "fft",
+    "dct",
+    "dst",
+    "convolution",
+    "wgsl"
+  ],
+  "author": "Maksim Eremenko",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src/**/*",
+    "README.md",
+    "LICENSE",
+    "docs/README.md",
+    "docs/API.md",
+    "docs/ARCHITECTURE.md",
+    "docs/PERFORMANCE.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "bench": "node ./bench/bench.js"
+  }
+}

@@ -1,0 +1,25 @@
+node_modules/
+
+web/bundle.js
+web/_serve_out.log
+web/_serve_err.log
+
+.tmp_chrome_diag/
+.tmp_chrome_diag_*/
+.tmp_chrome_diag_escalated_*/
+.tmp_browser_runner/
+.npm-cache-temp/
+.claude/
+
+__pycache__/
+*.pyc
+*.pyc.*
+
+.DS_Store
+Thumbs.db
+
+# Private/internal planning docs (keep local only)
+PLAN.md
+FEATURE_GAP.md
+PORT_STATUS.md
+docs/internal/
