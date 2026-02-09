@@ -46,6 +46,12 @@ function strideForAxis(dims, axis) {
 
 function formatLimits(limits) {
   const m = limits?.maxComputeWorkgroupsPerDimension;
+  let maxDispatch = undefined;
+  if (Array.isArray(m) || ArrayBuffer.isView(m)) {
+    maxDispatch = [m[0], m[1], m[2]];
+  } else if (Number.isFinite(m)) {
+    maxDispatch = Math.floor(m);
+  }
   return JSON.stringify(
     {
       maxStorageBufferBindingSize: limits?.maxStorageBufferBindingSize,
@@ -56,11 +62,21 @@ function formatLimits(limits) {
       maxComputeInvocationsPerWorkgroup: limits?.maxComputeInvocationsPerWorkgroup,
       maxComputeWorkgroupStorageSize: limits?.maxComputeWorkgroupStorageSize,
       minStorageBufferOffsetAlignment: limits?.minStorageBufferOffsetAlignment,
-      maxComputeWorkgroupsPerDimension: m ? [m[0], m[1], m[2]] : undefined,
+      maxComputeWorkgroupsPerDimension: maxDispatch,
     },
     null,
     2
   );
+}
+
+function maxComputeWorkgroupsX(limits) {
+  const raw = limits?.maxComputeWorkgroupsPerDimension;
+  if (Array.isArray(raw) || ArrayBuffer.isView(raw)) {
+    const v = raw[0];
+    return Number.isFinite(v) ? Math.floor(v) : null;
+  }
+  if (Number.isFinite(raw)) return Math.floor(raw);
+  return null;
 }
 
 function normalizeScaleFactor({ normalize, direction, nTotal }) {
@@ -337,17 +353,17 @@ class FftPlan {
 
   _buildDispatchChunks(totalComplex, shape, batch) {
     const workgroupsX = Math.ceil(totalComplex / this._workgroupSizeX);
-    const maxWgXRaw = this.device.limits?.maxComputeWorkgroupsPerDimension?.[0];
+    const maxWgXRaw = maxComputeWorkgroupsX(this.device.limits);
     const maxWgX = Number.isFinite(maxWgXRaw) ? Math.floor(maxWgXRaw) : null;
     if (maxWgX != null && maxWgX < 1) {
       throw new Error(
         [
-          `Invalid device limit: maxComputeWorkgroupsPerDimension[0]=${maxWgXRaw}`,
+          `Invalid device limit: maxComputeWorkgroupsPerDimension=${maxWgXRaw}`,
           `shape=${JSON.stringify(shape)} batch=${batch} totalComplex=${totalComplex} workgroupSizeX=${this._workgroupSizeX} workgroupsX=${workgroupsX}`,
         ].join("\n")
       );
     }
-    const maxChunkWgX = maxWgX == null ? workgroupsX : Math.min(workgroupsX, maxWgX);
+    const maxChunkWgX = maxWgX == null ? workgroupsX : Math.max(1, Math.min(workgroupsX, maxWgX));
     const dispatchChunks = [];
     for (let wgStart = 0; wgStart < workgroupsX; wgStart += maxChunkWgX) {
       const wgCount = Math.min(maxChunkWgX, workgroupsX - wgStart);

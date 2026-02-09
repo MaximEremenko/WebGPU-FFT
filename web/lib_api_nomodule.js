@@ -2940,17 +2940,20 @@
     
       _buildDispatchChunks(totalComplex, shape, batch) {
         const workgroupsX = Math.ceil(totalComplex / this._workgroupSizeX);
-        const maxWgXRaw = this.device.limits?.maxComputeWorkgroupsPerDimension?.[0];
+        const _maxRaw = this.device.limits?.maxComputeWorkgroupsPerDimension;
+        const maxWgXRaw = (Array.isArray(_maxRaw) || ArrayBuffer.isView(_maxRaw))
+          ? _maxRaw[0]
+          : _maxRaw;
         const maxWgX = Number.isFinite(maxWgXRaw) ? Math.floor(maxWgXRaw) : null;
         if (maxWgX != null && maxWgX < 1) {
           throw new Error(
             [
-              `Invalid device limit: maxComputeWorkgroupsPerDimension[0]=${maxWgXRaw}`,
+              `Invalid device limit: maxComputeWorkgroupsPerDimension=${maxWgXRaw}`,
               `shape=${JSON.stringify(shape)} batch=${batch} totalComplex=${totalComplex} workgroupSizeX=${this._workgroupSizeX} workgroupsX=${workgroupsX}`,
             ].join("\n")
           );
         }
-        const maxChunkWgX = maxWgX == null ? workgroupsX : Math.min(workgroupsX, maxWgX);
+        const maxChunkWgX = maxWgX == null ? workgroupsX : Math.max(1, Math.min(workgroupsX, maxWgX));
         const dispatchChunks = [];
         for (let wgStart = 0; wgStart < workgroupsX; wgStart += maxChunkWgX) {
           const wgCount = Math.min(maxChunkWgX, workgroupsX - wgStart);
