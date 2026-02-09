@@ -2,7 +2,7 @@
 
 Standalone WebGPU FFT/DCT/convolution library in pure JavaScript (ESM) with WGSL compute shaders.
 
-`webgpufft` follows a plan-based execution model (create plan -> bind resources -> execute) inspired by reference-style workflows.
+`webgpufft` follows a plan-based execution model (create plan -> bind resources -> execute).
 
 ## Author
 
@@ -68,10 +68,7 @@ const plan = createPlan(device, { type: "fftconv", ...preset });
 - Documentation index: `docs/README.md`
 - API reference: `docs/API.md`
 - Performance and browser validation: `docs/PERFORMANCE.md`
-- Port status (authoritative progress tracker): `PORT_STATUS.md`
-- reference parity comparison and remaining gaps: `FEATURE_GAP.md`
 - Contribution workflow and quality gate: `CONTRIBUTING.md`
-- Internal implementation process docs: `docs/internal/`
 
 ## Supported in current implementation (Summary)
 
@@ -87,7 +84,7 @@ const plan = createPlan(device, { type: "fftconv", ...preset });
   - `fftconv` and `conv2d` are `f32`-only in current implementation
 - Large-mode behavior:
   - dispatch chunking and batch slicing
-  - out-of-core/four-step support where implemented (see `docs/API.md` and `PORT_STATUS.md`)
+  - out-of-core/four-step support where implemented (see `docs/API.md`)
 - Segmented buffers through `BufferView` (Tier A/B/C policy)
 
 ## Important Constraints
@@ -95,7 +92,6 @@ const plan = createPlan(device, { type: "fftconv", ...preset });
 - `inPlace:true` is supported only for `c2c` in current implementation.
 - `r2c` is forward-only and `c2r` is inverse-only.
 - Some large fallback routes are currently `precision:"f32"` only.
-- See `PORT_STATUS.md` for current partial gaps and deferred items.
 
 ## Test And Validate
 
